@@ -1,0 +1,2 @@
+Main-Class: modbus.MainFrame
+Class-Path: lib/ resources/
