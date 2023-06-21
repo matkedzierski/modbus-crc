@@ -1,22 +1,41 @@
 package modbus;
 
+import java.util.Arrays;
+
 public class CRC {
-    char HiByte = 0xFF;
-    char LoByte = 0xFF;
-    char Index;
+    int HiByte = 0xFF;
+    int LoByte = 0xFF;
+    int Index;
 
-    public static void main(String[] args){
-        char[] in = new char[]{0x01,0x10,0x00,0x11,0x00,0x03,0x06,0x1A,0xC4,0xBA,0xD0 };
-        System.out.println(new CRC().calculate(in));
-    }
-
-    public byte[] calculate(char[] data) {
-        for(int i = 0; i < data.length; i++) {
-            Index = (char)(HiByte ^ data[i]);
-            HiByte = (char)(LoByte ^ LookupTables.aCRCHi[Index]);
-            LoByte = (char)LookupTables.aCRCLo[Index];
+    public int[] calculate(int[] data) {
+        for (int b : data) {
+            Index = (HiByte ^ b);
+            HiByte = (LoByte ^ LookupTables.aCRCHi[Index]);
+            LoByte = LookupTables.aCRCLo[Index];
         }
 
-        return new byte[] { (byte)HiByte, (byte)LoByte };
+        return new int[] { (byte) HiByte, (byte) LoByte };
+    }
+
+    public static int[] hexStringToByteArray(String s) {
+        int len = s.length();
+        int[] data = new int[len / 2];
+        for (int i = 0; i < len; i += 2) {
+            data[i / 2] = (int) ((Character.digit(s.charAt(i), 16) << 4)
+                    + Character.digit(s.charAt(i + 1), 16));
+        }
+        return data;
+    }
+
+    private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
+
+    public static String bytesToHex(int[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        for (int j = 0; j < bytes.length; j++) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = HEX_ARRAY[v >>> 4];
+            hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
+        }
+        return new String(hexChars);
     }
 }

@@ -11,5 +11,5 @@ popd
 launch4jc ./resources/execonfig.xml
 rm -f ./ModbusCRC.exe
 mv ./target/ModbusCRC.exe .
-rm -rf ./target
+# rm -rf ./target
 exec ./ModbusCRC.exe
